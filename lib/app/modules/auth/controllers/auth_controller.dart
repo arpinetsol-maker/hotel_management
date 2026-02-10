@@ -6,16 +6,24 @@ import 'package:hotel_management/app/routes/app_pages.dart';
 
 class AuthController extends GetxController {
   final AuthRepository _authRepository = AuthRepository();
+
   final Rx<UserModel?> currentUser = Rx<UserModel?>(null);
   final RxBool isLoading = false.obs;
   final RxString errorMessage = ''.obs;
 
+  /// 🔴 STATIC MAIN ADMIN CREDENTIALS
+  static const String _mainAdminEmail = 'arpi.netsol@gmail.com';
+  static const String _mainAdminPassword = '123456';
+
+  /// Route resolver
   String _routeForUserType(String? userType) {
     switch (userType) {
       case 'admin':
         return Routes.ADMIN_DASHBOARD;
       case 'hotel_admin':
-        return Routes.HOTEL_ADMIN_HOME;
+        return Routes.HOTEL_ADMIN_DASHBOARD;
+      case 'main_admin':
+        return Routes.MAIN_ADMIN_PENDING_REQUESTS;
       default:
         return Routes.USER_HOME;
     }
@@ -26,35 +34,30 @@ class AuthController extends GetxController {
     super.onInit();
   }
 
-  //check if user log in or not
+  // ✅ CHECK AUTH STATUS (AUTO LOGIN)
   Future<void> checkAuthStatus() async {
     try {
-      if (StorageService.isLoggedIn()) {
-        final user = await _authRepository.getCurrentUser();
-        if (user != null) {
-          currentUser.value = user;
-
-          // Navigate based on user type
-          if (user.userType == 'main_admin') {
-            Get.offAllNamed(Routes.MAIN_ADMIN_DASHBOARD);
-          } else if (user.userType == 'hotel_admin') {
-            Get.offAllNamed(Routes.HOTEL_ADMIN_DASHBOARD);
-          } else {
-            Get.offAllNamed(Routes.USER_HOME);
-          }
-        } else {
-          Get.offAllNamed(Routes.LOGIN);
-        }
-      } else {
+      if (!StorageService.isLoggedIn()) {
         Get.offAllNamed(Routes.LOGIN);
+        return;
       }
-    } catch (e) {
+
+      final user = await _authRepository.getCurrentUser();
+      if (user == null) {
+        Get.offAllNamed(Routes.LOGIN);
+        return;
+      }
+
+      currentUser.value = user;
+
+      final storedType = StorageService.getUserType();
+      Get.offAllNamed(_routeForUserType(storedType ?? user.userType));
+    } catch (_) {
       Get.offAllNamed(Routes.LOGIN);
     }
   }
 
-
-  // Sign Up
+  // ✅ SIGN UP
   Future<void> signUp({
     required String email,
     required String password,
@@ -77,8 +80,6 @@ class AuthController extends GetxController {
       if (user != null) {
         currentUser.value = user;
         Get.snackbar('Success', 'Account created successfully');
-
-        // Navigate based on user type
         Get.offAllNamed(_routeForUserType(userType));
       }
     } catch (e) {
@@ -89,26 +90,42 @@ class AuthController extends GetxController {
     }
   }
 
-  // Sign In
-  Future<void> signIn({required String email, required String password}) async {
+  // ✅ SIGN IN (UPDATED)
+  Future<void> signIn({
+    required String email,
+    required String password,
+  }) async {
     try {
       isLoading.value = true;
       errorMessage.value = '';
 
+      /// 🔴 MAIN ADMIN STATIC LOGIN
+      if (email == _mainAdminEmail && password == _mainAdminPassword) {
+        StorageService.setLoggedIn(true);
+        StorageService.saveUserType('main_admin');
+
+        Get.offAllNamed(Routes.MAIN_ADMIN_PENDING_REQUESTS);
+        return;
+      }
+
+      /// 🔵 NORMAL USERS
       final user = await _authRepository.signIn(
         email: email,
         password: password,
       );
 
-      if (user != null) {
-        currentUser.value = user;
-        Get.snackbar('Success', 'Logged in successfully');
-
-        // Navigate based on user type
-        Get.offAllNamed(
-          _routeForUserType(StorageService.getUserType() ?? user.userType),
-        );
+      if (user == null) {
+        Get.snackbar('Error', 'Invalid email or password');
+        return;
       }
+
+      currentUser.value = user;
+
+      final userType =
+          StorageService.getUserType() ?? user.userType;
+
+      Get.snackbar('Success', 'Logged in successfully');
+      Get.offAllNamed(_routeForUserType(userType));
     } catch (e) {
       errorMessage.value = e.toString();
       Get.snackbar('Error', 'Invalid email or password');
@@ -117,7 +134,7 @@ class AuthController extends GetxController {
     }
   }
 
-  //Sign In with OTP
+  // ✅ OTP SIGN IN
   Future<void> signInWithOTP(String email) async {
     try {
       isLoading.value = true;
@@ -134,21 +151,26 @@ class AuthController extends GetxController {
     }
   }
 
-  // Verify OTP
-  Future<void> verifyOTP({required String email, required String token}) async {
+  // ✅ VERIFY OTP
+  Future<void> verifyOTP({
+    required String email,
+    required String token,
+  }) async {
     try {
       isLoading.value = true;
       errorMessage.value = '';
 
-      final user = await _authRepository.verifyOTP(email: email, token: token);
+      final user =
+      await _authRepository.verifyOTP(email: email, token: token);
 
       if (user != null) {
         currentUser.value = user;
-        Get.snackbar('Success', 'Logged in successfully');
 
-        Get.offAllNamed(
-          _routeForUserType(StorageService.getUserType() ?? user.userType),
-        );
+        final userType =
+            StorageService.getUserType() ?? user.userType;
+
+        Get.snackbar('Success', 'Logged in successfully');
+        Get.offAllNamed(_routeForUserType(userType));
       }
     } catch (e) {
       errorMessage.value = e.toString();
@@ -158,7 +180,7 @@ class AuthController extends GetxController {
     }
   }
 
-  // Update Profile
+  // ✅ UPDATE PROFILE
   Future<void> updateProfile({
     String? fullName,
     String? phone,
@@ -167,45 +189,46 @@ class AuthController extends GetxController {
     try {
       isLoading.value = true;
 
-      if (currentUser.value != null) {
-        final updatedUser = await _authRepository.updateProfile(
-          userId: currentUser.value!.id,
-          fullName: fullName,
-          phone: phone,
-          profileImagePath: profileImagePath,
-        );
+      if (currentUser.value == null) return;
 
-        if (updatedUser != null) {
-          currentUser.value = updatedUser;
-          Get.snackbar('Success', 'Profile updated successfully');
-        }
+      final updatedUser = await _authRepository.updateProfile(
+        userId: currentUser.value!.id,
+        fullName: fullName,
+        phone: phone,
+        profileImagePath: profileImagePath,
+      );
+
+      if (updatedUser != null) {
+        currentUser.value = updatedUser;
+        Get.snackbar('Success', 'Profile updated successfully');
       }
-    } catch (e) {
+    } catch (_) {
       Get.snackbar('Error', 'Failed to update profile');
     } finally {
       isLoading.value = false;
     }
   }
 
-  // Sign Out
+  // ✅ SIGN OUT
   Future<void> signOut() async {
     try {
       await _authRepository.signOut();
       currentUser.value = null;
+      StorageService.clearAll();
       Get.offAllNamed(Routes.LOGIN);
-    } catch (e) {
+    } catch (_) {
       Get.snackbar('Error', 'Failed to sign out');
     }
   }
 
-  // Reset Password
+  // ✅ RESET PASSWORD
   Future<void> resetPassword(String email) async {
     try {
       isLoading.value = true;
       await _authRepository.resetPassword(email);
-      Get.snackbar('Success', 'Password reset link sent to your email');
+      Get.snackbar('Success', 'Password reset link sent');
       Get.back();
-    } catch (e) {
+    } catch (_) {
       Get.snackbar('Error', 'Failed to send reset link');
     } finally {
       isLoading.value = false;

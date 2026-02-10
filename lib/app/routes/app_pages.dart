@@ -50,7 +50,28 @@ class AppPages {
       page: () => const UserHomeView(),
       binding: UserHomeBinding(),
     ),
+// ================= HOTEL ADMIN =================
+    GetPage(
+      name: Routes.HOTEL_ADMIN_DASHBOARD,
+      page: () => const HotelAdminDashboardView(),
+      binding: HotelAdminDashboardBinding(),
+    ),
 
+    // ================= MAIN ADMIN =================
+
+    /// Pending hotel registration requests
+    GetPage(
+      name: Routes.MAIN_ADMIN_PENDING_REQUESTS,
+      page: () => const MainAdminPendingRequestsView(),
+      binding: MainAdminRegistrationBinding(),
+    ),
+
+    /// View + approve/reject single registration
+    GetPage(
+      name: Routes.MAIN_ADMIN_REGISTRATION_DETAILS,
+      page: () => const MainAdminRegistrationDetailView(),
+      binding: MainAdminRegistrationBinding(),
+    ),
 
   ];
 }
