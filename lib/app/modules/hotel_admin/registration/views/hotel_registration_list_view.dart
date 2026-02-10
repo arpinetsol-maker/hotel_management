@@ -150,15 +150,18 @@ class HotelRegistrationListView extends GetView<HotelRegistrationController> {
           ),
         );
       }),
-      floatingActionButton: Obx(() {
-        if (controller.hasPendingRequest) return SizedBox.shrink();
-        return FloatingActionButton.extended(
-          onPressed: () => Get.toNamed('/hotel-admin/register'),
-          backgroundColor: AppColors.userPrimary,
-          icon: Icon(Icons.add),
-          label: Text('New Registration'),
-        );
-      }),
+    floatingActionButton: Obx(() {
+    if (controller.isLoading.value ||
+    controller.hasPendingRequest.value) {
+    return const SizedBox.shrink();
+    }
+
+    return FloatingActionButton.extended(
+    onPressed: () => Get.toNamed('/hotel-admin/register'),
+    backgroundColor: AppColors.userPrimary,
+    icon: const Icon(Icons.add),
+    label: const Text('New Registration'),
     );
+    }),);
   }
 }

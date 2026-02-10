@@ -1,115 +1,108 @@
 import 'package:get/get.dart';
-import 'package:hotel_management/app/core/services/supabase_service.dart';
+import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+
+import '../../../../core/constants/app_constants.dart';
 import 'package:hotel_management/app/data/models/hotel_registration_model.dart';
-import 'package:hotel_management/app/data/repositories/hotel_registration_repository.dart';
 
 class HotelRegistrationController extends GetxController {
-  final HotelRegistrationRepository _repo = HotelRegistrationRepository();
+  final SupabaseClient _supabase = Supabase.instance.client;
 
-  final RxList<HotelRegistrationRequestModel> myRegistrations =
-      <HotelRegistrationRequestModel>[].obs;
-  final RxList<HotelRegistrationRequestModel> pendingRegistrations =
-      <HotelRegistrationRequestModel>[].obs;
-  final RxList<HotelRegistrationRequestModel> allRegistrations =
-      <HotelRegistrationRequestModel>[].obs;
+  // ===============================
+  // STATE
+  // ===============================
   final RxBool isLoading = false.obs;
+  final RxList<HotelRegistrationRequestModel> myRequests =
+      <HotelRegistrationRequestModel>[].obs;
 
-  Future<void> loadMyRegistrations() async {
-    final uid = SupabaseService.currentUserid;
-    if (uid == null) return;
-    try {
-      isLoading.value = true;
-      myRegistrations.value = await _repo.getMyRegistrations(uid);
-    } catch (e) {
-      Get.snackbar('Error', 'Failed to load registrations');
-    } finally {
-      isLoading.value = false;
-    }
+  final RxBool hasPendingRequest = false.obs;
+
+  // ===============================
+  // LIFECYCLE
+  // ===============================
+  @override
+  void onInit() {
+    super.onInit();
+    loadMyRequests();
   }
 
-  Future<void> loadPendingRegistrations() async {
+  // ===============================
+  // LOAD USER REGISTRATIONS
+  // ===============================
+  Future<void> loadMyRequests() async {
     try {
       isLoading.value = true;
-      pendingRegistrations.value = await _repo.getPendingRegistrations();
-    } catch (e) {
-      Get.snackbar('Error', 'Failed to load pending registrations');
-    } finally {
-      isLoading.value = false;
-    }
-  }
 
-  Future<void> loadAllRegistrations({String? status}) async {
-    try {
-      isLoading.value = true;
-      allRegistrations.value = await _repo.getAllRegistrations(status: status);
-    } catch (e) {
-      Get.snackbar('Error', 'Failed to load registrations');
-    } finally {
-      isLoading.value = false;
-    }
-  }
+      final userId = _supabase.auth.currentUser?.id;
+      if (userId == null) return;
 
-  Future<void> submitRegistration(Map<String, dynamic> data) async {
-    try {
-      isLoading.value = true;
-      final r = await _repo.submitRegistration(data);
-      if (r != null) {
-        myRegistrations.insert(0, r);
-        Get.snackbar('Success', 'Registration request submitted');
-        Get.back();
-      }
-    } catch (e) {
-      Get.snackbar('Error', 'Failed to submit registration');
-    } finally {
-      isLoading.value = false;
-    }
-  }
+      final response = await _supabase
+          .from('hotel_registration_requests')
+          .select()
+          .eq('user_id', userId)
+          .order('created_at', ascending: false);
 
-  Future<void> approveRegistration(
-      String requestId, {
-        String? adminNotes,
-      }) async {
-    final adminId = SupabaseService.currentUserid;
-    if (adminId == null) return;
-    try {
-      isLoading.value = true;
-      final r = await _repo.approveRegistration(
-        requestId,
-        adminId,
-        adminNotes: adminNotes,
+      final List<HotelRegistrationRequestModel> list =
+      (response as List)
+          .map((e) => HotelRegistrationRequestModel.fromJson(e))
+          .toList();
+
+      myRequests.assignAll(list);
+
+      // Check pending request
+      hasPendingRequest.value =
+          list.any((element) => element.status == 'pending');
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Failed to load registrations',
+        backgroundColor: AppColors.error,
+        colorText: Colors.white,
       );
-      if (r != null) {
-        pendingRegistrations.removeWhere((e) => e.id == requestId);
-        Get.snackbar('Success', 'Registration approved');
-      }
-    } catch (e) {
-      Get.snackbar('Error', 'Failed to approve');
     } finally {
       isLoading.value = false;
     }
   }
 
-  Future<void> rejectRegistration(
-      String requestId,
-      String reason, {
-        String? adminNotes,
-      }) async {
-    final adminId = SupabaseService.currentUserid;
-    if (adminId == null) return;
+  // ===============================
+  // OPEN STATUS VIEW
+  // ===============================
+  void openStatus(HotelRegistrationRequestModel request) {
+    Get.toNamed(
+      '/hotel-admin/registration-status',
+      arguments: request,
+    );
+  }
+
+  // ===============================
+  // DELETE / WITHDRAW (OPTIONAL)
+  // ===============================
+  Future<void> withdrawRegistration(String requestId) async {
     try {
       isLoading.value = true;
-      final r = await _repo.rejectRegistration(
-        requestId,
-        adminId,
-        reason,
-        adminNotes: adminNotes,
+
+      await _supabase
+          .from('hotel_registration_requests')
+          .delete()
+          .eq('id', requestId);
+
+      myRequests.removeWhere((e) => e.id == requestId);
+      hasPendingRequest.value =
+          myRequests.any((e) => e.status == 'pending');
+
+      Get.snackbar(
+        'Withdrawn',
+        'Registration withdrawn successfully',
+        backgroundColor: AppColors.success,
+        colorText: Colors.white,
       );
-      if (r != null) {
-        pendingRegistrations.removeWhere((e) => e.id == requestId);
-        Get.snackbar('Success', 'Registration rejected');
-      }
     } catch (e) {
-      Get.snackbar('Error', 'Failed to reject');
+      Get.snackbar(
+        'Error',
+        'Failed to withdraw registration',
+        backgroundColor: AppColors.error,
+        colorText: Colors.white,
+      );
     } finally {
       isLoading.value = false;
     }
