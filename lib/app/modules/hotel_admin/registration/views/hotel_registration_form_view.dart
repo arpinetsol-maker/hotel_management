@@ -75,60 +75,60 @@ class HotelRegistrationFormView extends GetView<HotelRegistrationController> {
             ),
             const SizedBox(height: 24),
             Obx(
-              () => SizedBox(
+                  () => SizedBox(
                 width: double.infinity,
                 height: 52,
                 child: ElevatedButton(
                   onPressed: controller.isLoading.value
                       ? null
                       : () {
-                          final adminId = SupabaseService.currentUserid;
-                          if (adminId == null) {
-                            Get.snackbar('Error', 'You must be logged in');
-                            return;
-                          }
-                          if (nameController.text.trim().isEmpty ||
-                              emailController.text.trim().isEmpty ||
-                              phoneController.text.trim().isEmpty ||
-                              addressController.text.trim().isEmpty ||
-                              cityController.text.trim().isEmpty ||
-                              stateController.text.trim().isEmpty ||
-                              countryController.text.trim().isEmpty ||
-                              roomsController.text.trim().isEmpty) {
-                            Get.snackbar('Error', 'Fill all required fields');
-                            return;
-                          }
-                          final rooms = int.tryParse(
-                            roomsController.text.trim(),
-                          );
-                          if (rooms == null || rooms < 1) {
-                            Get.snackbar(
-                              'Error',
-                              'Total rooms must be a positive number',
-                            );
-                            return;
-                          }
-                          controller.submitRegistration({
-                            'hotel_admin_id': adminId,
-                            'hotel_name': nameController.text.trim(),
-                            'hotel_email': emailController.text.trim(),
-                            'hotel_phone': phoneController.text.trim(),
-                            'address': addressController.text.trim(),
-                            'city': cityController.text.trim(),
-                            'state': stateController.text.trim(),
-                            'country': countryController.text.trim(),
-                            'postal_code': postalController.text.trim().isEmpty
-                                ? null
-                                : postalController.text.trim(),
-                            'description': descController.text.trim().isEmpty
-                                ? null
-                                : descController.text.trim(),
-                            'total_rooms': rooms,
-                            'star_rating': int.tryParse(
-                              starController.text.trim(),
-                            ),
-                          });
-                        },
+                    final adminId = SupabaseService.currentUserid;
+                    if (adminId == null) {
+                      Get.snackbar('Error', 'You must be logged in');
+                      return;
+                    }
+                    if (nameController.text.trim().isEmpty ||
+                        emailController.text.trim().isEmpty ||
+                        phoneController.text.trim().isEmpty ||
+                        addressController.text.trim().isEmpty ||
+                        cityController.text.trim().isEmpty ||
+                        stateController.text.trim().isEmpty ||
+                        countryController.text.trim().isEmpty ||
+                        roomsController.text.trim().isEmpty) {
+                      Get.snackbar('Error', 'Fill all required fields');
+                      return;
+                    }
+                    final rooms = int.tryParse(
+                      roomsController.text.trim(),
+                    );
+                    if (rooms == null || rooms < 1) {
+                      Get.snackbar(
+                        'Error',
+                        'Total rooms must be a positive number',
+                      );
+                      return;
+                    }
+                    controller.submitRegistration({
+                      'hotel_admin_id': adminId,
+                      'hotel_name': nameController.text.trim(),
+                      'hotel_email': emailController.text.trim(),
+                      'hotel_phone': phoneController.text.trim(),
+                      'address': addressController.text.trim(),
+                      'city': cityController.text.trim(),
+                      'state': stateController.text.trim(),
+                      'country': countryController.text.trim(),
+                      'postal_code': postalController.text.trim().isEmpty
+                          ? null
+                          : postalController.text.trim(),
+                      'description': descController.text.trim().isEmpty
+                          ? null
+                          : descController.text.trim(),
+                      'total_rooms': rooms,
+                      'star_rating': int.tryParse(
+                        starController.text.trim(),
+                      ),
+                    });
+                  },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.userPrimary,
                   ),
@@ -145,12 +145,12 @@ class HotelRegistrationFormView extends GetView<HotelRegistrationController> {
   }
 
   Widget _field(
-    TextEditingController c,
-    String label,
-    IconData icon, {
-    int maxLines = 1,
-    TextInputType? keyboardType,
-  }) {
+      TextEditingController c,
+      String label,
+      IconData icon, {
+        int maxLines = 1,
+        TextInputType? keyboardType,
+      }) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: TextField(
