@@ -22,6 +22,8 @@ class HotelRegistrationRequestModel {
   final String? adminNotes;
   final DateTime createdAt;
   final DateTime updatedAt;
+  final String? hotelImagePath;
+  final String? hotelWebsite;
 
   HotelRegistrationRequestModel({
     required this.id,
@@ -42,11 +44,13 @@ class HotelRegistrationRequestModel {
     this.starRating,
     required this.status,
     this.reviewedBy,
-    this.reviewedAt,
+    required this.reviewedAt,
     this.rejectionReason,
     this.adminNotes,
     required this.createdAt,
     required this.updatedAt,
+    this.hotelImagePath,
+    this.hotelWebsite
   });
 
   factory HotelRegistrationRequestModel.fromJson(Map<String, dynamic> json) {
@@ -70,12 +74,14 @@ class HotelRegistrationRequestModel {
       status: json['status'] as String,
       reviewedBy: json['reviewed_by'] as String?,
       reviewedAt: json['reviewed_at'] != null
-          ? DateTime.parse(json['reviewed_at'] as String)
+          ? DateTime.parse(json['reviewed_at'])
           : null,
       rejectionReason: json['rejection_reason'] as String?,
       adminNotes: json['admin_notes'] as String?,
       createdAt: DateTime.parse(json['created_at'] as String),
       updatedAt: DateTime.parse(json['updated_at'] as String),
+      hotelImagePath: json['hotel_image_path'],
+      hotelWebsite: json['hotel_website'],
     );
   }
 
@@ -104,6 +110,8 @@ class HotelRegistrationRequestModel {
       'admin_notes': adminNotes,
       'created_at': createdAt.toIso8601String(),
       'updated_at': updatedAt.toIso8601String(),
+      'hotel_image_path': hotelImagePath,
+      'hotel_website': hotelWebsite,
     };
   }
 }

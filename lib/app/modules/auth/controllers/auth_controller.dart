@@ -21,9 +21,9 @@ class AuthController extends GetxController {
       case 'admin':
         return Routes.ADMIN_DASHBOARD;
       case 'hotel_admin':
-        return Routes.HOTEL_ADMIN_DASHBOARD;
+        return Routes.HOTEL_ADMIN_REGISTRATION_FORM;
       case 'main_admin':
-        return Routes.MAIN_ADMIN_PENDING_REQUESTS;
+        return Routes.MAIN_ADMIN_REGISTRATION_DETAILS;
       default:
         return Routes.USER_HOME;
     }

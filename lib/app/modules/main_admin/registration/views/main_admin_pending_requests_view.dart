@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import '../controllers/main_admin_registration_controller.dart';
 import '../../../../core/constants/app_constants.dart';
 import 'package:intl/intl.dart';
+import 'package:hotel_management/app/modules/main_admin/registration/views/main_admin_approved_hotels_view.dart';
 
 class MainAdminPendingRequestsView extends GetView<MainAdminRegistrationController> {
   const MainAdminPendingRequestsView({Key? key}) : super(key: key);
@@ -15,27 +16,46 @@ class MainAdminPendingRequestsView extends GetView<MainAdminRegistrationControll
         backgroundColor: AppColors.adminPrimary,
         title: Row(
           children: [
-            Text('Pending Registrations'),
-            SizedBox(width: 8),
-            Obx(() => controller.pendingCount.value > 0
-                ? Container(
-              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              decoration: BoxDecoration(
-                color: AppColors.error,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Text(
-                '${controller.pendingCount.value}',
-                style: TextStyle(fontSize: 12),
-              ),
-            )
-                : SizedBox.shrink()),
+            const Text('Pending Registrations'),
+            const SizedBox(width: 8),
+            Obx(
+                  () => controller.pendingCount.value > 0
+                  ? Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: AppColors.error,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  '${controller.pendingCount.value}',
+                  style: const TextStyle(fontSize: 12, color: Colors.white),
+                ),
+              )
+                  : const SizedBox.shrink(),
+            ),
           ],
         ),
+        actions: [
+          IconButton(
+            tooltip: 'View Approved Hotels',
+            icon: const Icon(Icons.list_alt_rounded,color:Colors.white,),
+            onPressed: () {
+              Get.toNamed('/main-admin/approved-hotels');
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.logout_outlined,color:Colors.white,),
+            onPressed: () {
+              Get.toNamed('/login');
+            },
+          ),
+
+        ],
       ),
+
       body: Obx(() {
         if (controller.isLoading.value) {
-          return Center(child: CircularProgressIndicator());
+          return Center(child: CircularProgressIndicator(color: AppColors.adminPrimary,));
         }
 
         if (controller.pendingRequests.isEmpty) {

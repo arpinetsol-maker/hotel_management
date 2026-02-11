@@ -12,7 +12,7 @@ class LoginView extends GetView<AuthController> {
     final passwordController = TextEditingController(text: '123456');
 
     return Scaffold(
-      backgroundColor: AppColors.userSecondary,
+      backgroundColor: AppColors.adminAccent2,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24),
@@ -27,7 +27,7 @@ class LoginView extends GetView<AuthController> {
                 style: TextStyle(
                   fontSize: 32,
                   fontWeight: FontWeight.bold,
-                  color: AppColors.userPrimary,
+                  color: AppColors.adminPrimary,
                 ),
               ),
               const SizedBox(height: 8),
@@ -35,7 +35,7 @@ class LoginView extends GetView<AuthController> {
                 'Sign in to continue',
                 style: TextStyle(
                   fontSize: 16,
-                  color: AppColors.grey,
+                  color: AppColors.adminAccent,
                 ),
               ),
 
@@ -43,12 +43,17 @@ class LoginView extends GetView<AuthController> {
 
               // Email Field
               TextField(
+                cursorColor: AppColors.adminPrimary,
                 controller: emailController,
                 keyboardType: TextInputType.emailAddress,
                 decoration: InputDecoration(
                   labelText: 'Email',
+                  fillColor: Colors.transparent,
+                  labelStyle: TextStyle(color: AppColors.adminPrimary),
                   hintText: 'Enter your email',
-                  prefixIcon: Icon(Icons.email, color: AppColors.userPrimary),
+                  prefixIcon: Icon(Icons.email, color: AppColors.adminAccent),
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(10),borderSide: BorderSide( color:AppColors.adminPrimary)),
+                  focusedBorder: OutlineInputBorder(borderSide: BorderSide(color:AppColors.adminPrimary))
                 ),
               ),
 
@@ -56,14 +61,20 @@ class LoginView extends GetView<AuthController> {
 
               // Password Field
               TextField(
+                cursorColor: AppColors.adminPrimary,
                 controller: passwordController,
                 obscureText: true,
                 decoration: InputDecoration(
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(10),borderSide: BorderSide( color:AppColors.adminPrimary)),
+                  fillColor: Colors.transparent,
                   labelText: 'Password',
+                  labelStyle: TextStyle(color: AppColors.adminPrimary),
                   hintText: 'Enter your password',
-                  prefixIcon: Icon(Icons.lock, color: AppColors.userPrimary),
+                  prefixIcon: Icon(Icons.lock, color: AppColors.adminAccent),
+                    focusedBorder: OutlineInputBorder(borderSide: BorderSide(color:AppColors.adminPrimary))
                 ),
-              ),
+                ),
+
 
               const SizedBox(height: 10),
 
@@ -74,7 +85,7 @@ class LoginView extends GetView<AuthController> {
                   onPressed: () => Get.toNamed('/forgot-password'),
                   child: Text(
                     'Forgot Password?',
-                    style: TextStyle(color: AppColors.userAccent2),
+                    style: TextStyle(color: AppColors.adminAccent),
                   ),
                 ),
               ),
@@ -95,7 +106,7 @@ class LoginView extends GetView<AuthController> {
                     );
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.userPrimary,
+                    backgroundColor: AppColors.adminPrimary,
                   ),
                   child: controller.isLoading.value
                       ? const CircularProgressIndicator(color: Colors.white)
@@ -108,12 +119,12 @@ class LoginView extends GetView<AuthController> {
               // Divider
               Row(
                 children: [
-                  Expanded(child: Divider(color: AppColors.grey)),
+                  Expanded(child: Divider(color: AppColors.adminPrimary)),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Text('OR', style: TextStyle(color: AppColors.grey)),
+                    child: Text('OR', style: TextStyle(color: AppColors.adminPrimary)),
                   ),
-                  Expanded(child: Divider(color: AppColors.grey)),
+                  Expanded(child: Divider(color: AppColors.adminPrimary)),
                 ],
               ),
 
@@ -127,13 +138,13 @@ class LoginView extends GetView<AuthController> {
                   onPressed: () {
                     controller.signInWithOTP(emailController.text.trim());
                   },
-                  icon: Icon(Icons.sms, color: AppColors.userAccent2),
+                  icon: Icon(Icons.sms, color: AppColors.adminPrimary),
                   label: Text(
                     'Sign in with OTP',
-                    style: TextStyle(color: AppColors.userAccent2),
+                    style: TextStyle(color: AppColors.adminPrimary),
                   ),
                   style: OutlinedButton.styleFrom(
-                    side: BorderSide(color: AppColors.userAccent2),
+                    side: BorderSide(color: AppColors.adminPrimary),
                   ),
                 ),
               ),
@@ -150,7 +161,7 @@ class LoginView extends GetView<AuthController> {
                     child: Text(
                       'Sign Up',
                       style: TextStyle(
-                        color: AppColors.userAccent2,
+                        color: AppColors.adminAccent,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
