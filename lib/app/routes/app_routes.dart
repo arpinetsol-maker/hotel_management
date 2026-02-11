@@ -38,9 +38,12 @@ abstract class Routes {
   static const HOTEL_ADMIN_REGISTER = '/hotel-admin/register';
   static const HOTEL_ADMIN_REGISTRATIONS = '/hotel-admin/registrations';
   static const HOTEL_ADMIN_REGISTRATION_STATUS = '/hotel-admin/registration-status';
+  static const HOTEL_ADMIN_REGISTRATION_FORM ='/hotel-admin/registartion-form';
+
 
 // Main Admin Routes
   static const MAIN_ADMIN_DASHBOARD = '/main-admin/dashboard';
   static const MAIN_ADMIN_PENDING_REQUESTS = '/main-admin/pending-requests';
   static const MAIN_ADMIN_REGISTRATION_DETAILS = '/main-admin/registration-details';
+  static const MAIN_ADMIN_APPROVED_HOTELS ='/main-admin/approved-hotels';
 }

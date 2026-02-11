@@ -20,12 +20,12 @@ class RegisterView extends GetView<AuthController> {
     final selectedType = RegistrationType.user.obs;
 
     return Scaffold(
-      backgroundColor: AppColors.userSecondary,
+      backgroundColor: AppColors.adminAccent2,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: AppColors.userPrimary),
+          icon: Icon(Icons.arrow_back, color: AppColors.adminPrimary),
           onPressed: () => Get.back(),
         ),
       ),
@@ -40,13 +40,13 @@ class RegisterView extends GetView<AuthController> {
                 style: TextStyle(
                   fontSize: 32,
                   fontWeight: FontWeight.bold,
-                  color: AppColors.userPrimary,
+                  color: AppColors.adminPrimary,
                 ),
               ),
               const SizedBox(height: 8),
               Text(
                 'Choose account type and sign up',
-                style: TextStyle(fontSize: 16, color: AppColors.grey),
+                style: TextStyle(fontSize: 16, color: AppColors.adminSecondary),
               ),
               const SizedBox(height: 24),
 
@@ -55,7 +55,7 @@ class RegisterView extends GetView<AuthController> {
                 'Account type',
                 style: TextStyle(
                   fontSize: 14,
-                  color: AppColors.grey,
+                  color: AppColors.adminPrimary,
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -147,7 +147,7 @@ class RegisterView extends GetView<AuthController> {
                     child: Text(
                       'Sign In',
                       style: TextStyle(
-                        color: AppColors.userAccent2,
+                        color: AppColors.adminAccent,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -183,8 +183,8 @@ class _TypeChip extends StatelessWidget {
   Widget build(BuildContext context) {
     return Material(
       color: selected
-          ? AppColors.userPrimary.withOpacity(0.15)
-          : AppColors.userSecondary,
+          ? Colors.transparent
+          : Colors.transparent,
       borderRadius: BorderRadius.circular(12),
       child: InkWell(
         onTap: onTap,
@@ -195,8 +195,8 @@ class _TypeChip extends StatelessWidget {
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
               color: selected
-                  ? AppColors.userPrimary
-                  : AppColors.grey.withOpacity(0.3),
+                  ? AppColors.adminPrimary
+                  : AppColors.adminPrimary.withOpacity(0.3),
               width: selected ? 2 : 1,
             ),
           ),
@@ -204,7 +204,7 @@ class _TypeChip extends StatelessWidget {
             children: [
               Icon(
                 icon,
-                color: selected ? AppColors.userPrimary : AppColors.grey,
+                color: selected ? AppColors.adminPrimary : AppColors.grey,
                 size: 28,
               ),
               const SizedBox(width: 12),
@@ -217,7 +217,7 @@ class _TypeChip extends StatelessWidget {
                       style: TextStyle(
                         fontWeight: FontWeight.w600,
                         color: selected
-                            ? AppColors.userPrimary
+                            ? AppColors.adminPrimary
                             : AppColors.black,
                       ),
                     ),
@@ -231,7 +231,7 @@ class _TypeChip extends StatelessWidget {
               if (selected)
                 Icon(
                   Icons.check_circle,
-                  color: AppColors.userPrimary,
+                  color: AppColors.adminPrimary,
                   size: 22,
                 ),
             ],
@@ -248,23 +248,23 @@ class _MainAdminDirectLogin extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: AppColors.userAccent.withOpacity(0.2),
+        color: AppColors.white.withOpacity(0.2),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.userAccent2.withOpacity(0.5)),
+        border: Border.all(color: AppColors.adminPrimary.withOpacity(0.5)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(Icons.info_outline, color: AppColors.userPrimary, size: 24),
+              Icon(Icons.info_outline, color: AppColors.adminPrimary, size: 24),
               const SizedBox(width: 8),
               Text(
                 'Main Admin',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  color: AppColors.userPrimary,
+                  color: AppColors.adminPrimary,
                 ),
               ),
             ],
@@ -272,7 +272,7 @@ class _MainAdminDirectLogin extends StatelessWidget {
           const SizedBox(height: 12),
           Text(
             'Main admin access uses direct login only. There is no public registration for this role.',
-            style: TextStyle(color: AppColors.grey, height: 1.4),
+            style: TextStyle(color: AppColors.adminAccent, height: 1.4),
           ),
           const SizedBox(height: 16),
           SizedBox(
@@ -282,7 +282,7 @@ class _MainAdminDirectLogin extends StatelessWidget {
               icon: const Icon(Icons.login),
               label: const Text('Go to Login'),
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.userPrimary,
+                backgroundColor: AppColors.adminPrimary,
                 padding: const EdgeInsets.symmetric(vertical: 14),
               ),
             ),
@@ -324,60 +324,91 @@ class _RegistrationForm extends StatelessWidget {
             padding: const EdgeInsets.only(bottom: 12),
             child: Text(
               'Register as Hotel Admin. After sign up you can add hotels or submit a hotel registration request.',
-              style: TextStyle(fontSize: 13, color: AppColors.grey),
+              style: TextStyle(fontSize: 13, color: AppColors.adminAccent),
             ),
           ),
         TextField(
+          cursorColor: AppColors.adminPrimary,
           controller: nameController,
           decoration: InputDecoration(
-            labelText: 'Full Name',
+
+            labelText: 'Full Name',fillColor:Colors.transparent,
+            labelStyle: TextStyle(color: AppColors.adminPrimary),
             hintText: 'Enter your full name',
-            prefixIcon: Icon(Icons.person, color: AppColors.userPrimary),
-            border: const OutlineInputBorder(),
+            prefixIcon: Icon(Icons.person, color: AppColors.adminPrimary),
+            border:  OutlineInputBorder(borderRadius:BorderRadius.circular(10)),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: AppColors.adminPrimary),
+            ),
           ),
         ),
         const SizedBox(height: 16),
         TextField(
+          cursorColor: AppColors.adminPrimary,
           controller: phoneController,
           keyboardType: TextInputType.phone,
           decoration: InputDecoration(
+            fillColor:Colors.transparent,
             labelText: 'Phone (optional)',
+            labelStyle: TextStyle(color: AppColors.adminPrimary),
             hintText: 'Enter your phone number',
-            prefixIcon: Icon(Icons.phone, color: AppColors.userPrimary),
-            border: const OutlineInputBorder(),
+            prefixIcon: Icon(Icons.phone, color: AppColors.adminPrimary),
+            border:  OutlineInputBorder(borderRadius:BorderRadius.circular(10)),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: AppColors.adminPrimary),
+            ),
           ),
         ),
         const SizedBox(height: 16),
         TextField(
+          cursorColor: AppColors.adminPrimary,
           controller: emailController,
           keyboardType: TextInputType.emailAddress,
           decoration: InputDecoration(
+            fillColor:Colors.transparent,
             labelText: 'Email',
+            labelStyle: TextStyle(color: AppColors.adminPrimary),
             hintText: 'Enter your email',
-            prefixIcon: Icon(Icons.email, color: AppColors.userPrimary),
-            border: const OutlineInputBorder(),
+            prefixIcon: Icon(Icons.email, color: AppColors.adminPrimary),
+            border:  OutlineInputBorder(borderRadius:BorderRadius.circular(10)),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: AppColors.adminPrimary),
+            ),
           ),
         ),
         const SizedBox(height: 16),
         TextField(
+          cursorColor: AppColors.adminPrimary,
           controller: passwordController,
           obscureText: true,
           decoration: InputDecoration(
+            fillColor:Colors.transparent,
             labelText: 'Password',
+            labelStyle: TextStyle(color: AppColors.adminPrimary),
             hintText: 'Enter your password',
-            prefixIcon: Icon(Icons.lock, color: AppColors.userPrimary),
-            border: const OutlineInputBorder(),
+            prefixIcon: Icon(Icons.lock, color: AppColors.adminPrimary),
+            border:OutlineInputBorder(borderRadius:BorderRadius.circular(10)),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: AppColors.adminPrimary),
+            ),
           ),
         ),
         const SizedBox(height: 16),
         TextField(
           controller: confirmPasswordController,
+          cursorColor: AppColors.adminPrimary,
+
           obscureText: true,
           decoration: InputDecoration(
+            fillColor:Colors.transparent,
             labelText: 'Confirm Password',
+            labelStyle: TextStyle(color: AppColors.adminPrimary),
             hintText: 'Re-enter your password',
-            prefixIcon: Icon(Icons.lock_outline, color: AppColors.userPrimary),
-            border: const OutlineInputBorder(),
+            prefixIcon: Icon(Icons.lock_outline, color: AppColors.adminPrimary),
+            border: OutlineInputBorder(borderRadius:BorderRadius.circular(10)),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: AppColors.adminPrimary),
+            ),
           ),
         ),
         const SizedBox(height: 24),
@@ -387,10 +418,10 @@ class _RegistrationForm extends StatelessWidget {
           child: ElevatedButton(
             onPressed: isLoading ? null : onRegister,
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.userPrimary,
+              backgroundColor: AppColors.adminPrimary,
             ),
             child: isLoading
-                ? const CircularProgressIndicator(color: Colors.white)
+                ? const CircularProgressIndicator(color: AppColors.adminPrimary)
                 : Text(
                     isHotelAdmin
                         ? 'Create Hotel Admin Account'
